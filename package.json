@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@types/node": "^22.10.7",
+    "readline-sync": "^1.4.10",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@types/readline-sync": "^1.4.8"
+  }
+}
