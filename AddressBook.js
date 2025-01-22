@@ -26,13 +26,45 @@ function createContact() {
         email,
     };
 }
-// Create the contact
-const contact = createContact();
-console.log("\nContact Created:");
-console.log(`   Name: ${contact.firstName} ${contact.lastName}
-   Address: ${contact.address}
-   City: ${contact.city}
-   State: ${contact.state}
-   Zip: ${contact.zip}
-   Phone: ${contact.phoneNumber}
-   Email: ${contact.email}`);
+// add new contact
+function addNewContact() {
+    const addContact = createContact();
+    contacts.push(addContact);
+}
+function listContacts() {
+    console.log("Contacts..");
+    if (contacts.length === 0) {
+        console.log("Empty");
+    }
+    else {
+        contacts.forEach((contact) => {
+            console.log(`       Name: ${contact.firstName} ${contact.lastName}
+        Address: ${contact.address}
+        City: ${contact.city}
+        State: ${contact.state}
+        Zip: ${contact.zip}
+        Phone: ${contact.phoneNumber}
+        Email: ${contact.email}`);
+        });
+    }
+}
+function addressBook() {
+    console.log("Creating a new contact...");
+    while (true) {
+        const cases = readline_sync_1.default.question("Enter First Name (1-3): ");
+        switch (cases) {
+            case "1":
+                addNewContact();
+                break;
+            case "2":
+                listContacts();
+                break;
+            case "3":
+                console.log("Exit");
+                return;
+            default:
+                console.log("No Contacts");
+        }
+    }
+}
+addressBook();
