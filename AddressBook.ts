@@ -61,11 +61,37 @@ function listContacts(): void {
   }
 }
 
+function editContact(): void {
+    const firstName = readlineSync.question("Enter First Name of the contact to edit: ");
+    const lastName = readlineSync.question("Enter Last Name of the contact to edit: ");
+  
+    const contact = contacts.find(
+      (c) => c.firstName.toLowerCase() === firstName.toLowerCase() && c.lastName.toLowerCase() === lastName.toLowerCase()
+    );
+  
+    if (!contact) {
+      console.log("Contact not found!");
+      return;
+    }
+  
+    console.log("\nEditing Contact...");
+    contact.address = readlineSync.question(`Enter Address [${contact.address}]: `, { defaultInput: contact.address });
+    contact.city = readlineSync.question(`Enter City [${contact.city}]: `, { defaultInput: contact.city });
+    contact.state = readlineSync.question(`Enter State [${contact.state}]: `, { defaultInput: contact.state });
+    contact.zip = readlineSync.question(`Enter ZIP Code [${contact.zip}]: `, { defaultInput: contact.zip });
+    contact.phoneNumber = readlineSync.question(`Enter Phone Number [${contact.phoneNumber}]: `, {
+      defaultInput: contact.phoneNumber,
+    });
+    contact.email = readlineSync.question(`Enter Email [${contact.email}]: `, { defaultInput: contact.email });
+  
+    console.log("Contact updated successfully!");
+}
+
 function addressBook(): void {
   console.log("Creating a new contact...");
 
   while (true) {
-    const cases = readlineSync.question("Enter First Name (1-3): ");
+    const cases = readlineSync.question("Enter First Name (1-4): ");
 
     switch (cases) {
       case "1":
@@ -79,6 +105,10 @@ function addressBook(): void {
       case "3":
         console.log("Exit");
         return;
+
+      case "4":
+        editContact();
+        break;
 
       default:
         console.log("No Contacts");

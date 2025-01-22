@@ -48,10 +48,29 @@ function listContacts() {
         });
     }
 }
+function editContact() {
+    const firstName = readline_sync_1.default.question("Enter First Name of the contact to edit: ");
+    const lastName = readline_sync_1.default.question("Enter Last Name of the contact to edit: ");
+    const contact = contacts.find((c) => c.firstName.toLowerCase() === firstName.toLowerCase() && c.lastName.toLowerCase() === lastName.toLowerCase());
+    if (!contact) {
+        console.log("Contact not found!");
+        return;
+    }
+    console.log("\nEditing Contact...");
+    contact.address = readline_sync_1.default.question(`Enter Address [${contact.address}]: `, { defaultInput: contact.address });
+    contact.city = readline_sync_1.default.question(`Enter City [${contact.city}]: `, { defaultInput: contact.city });
+    contact.state = readline_sync_1.default.question(`Enter State [${contact.state}]: `, { defaultInput: contact.state });
+    contact.zip = readline_sync_1.default.question(`Enter ZIP Code [${contact.zip}]: `, { defaultInput: contact.zip });
+    contact.phoneNumber = readline_sync_1.default.question(`Enter Phone Number [${contact.phoneNumber}]: `, {
+        defaultInput: contact.phoneNumber,
+    });
+    contact.email = readline_sync_1.default.question(`Enter Email [${contact.email}]: `, { defaultInput: contact.email });
+    console.log("Contact updated successfully!");
+}
 function addressBook() {
     console.log("Creating a new contact...");
     while (true) {
-        const cases = readline_sync_1.default.question("Enter First Name (1-3): ");
+        const cases = readline_sync_1.default.question("Enter First Name (1-4): ");
         switch (cases) {
             case "1":
                 addNewContact();
@@ -62,6 +81,9 @@ function addressBook() {
             case "3":
                 console.log("Exit");
                 return;
+            case "4":
+                editContact();
+                break;
             default:
                 console.log("No Contacts");
         }
