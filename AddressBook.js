@@ -80,10 +80,23 @@ function deleteContact() {
         contacts.push(...filteredContacts); // Add the remaining contacts back
     }
 }
+function addNewMultipleContacts() {
+    const numOfContacts = parseInt(readline_sync_1.default.question("How many contacts would you like to add? "), 10);
+    if (numOfContacts <= 0) {
+        console.log("Please enter a valid positive number.");
+        return;
+    }
+    for (let i = 0; i < numOfContacts; i++) {
+        console.log(`\nAdding Contact ${i + 1}:`);
+        const newContact = createContact();
+        contacts.push(newContact);
+    }
+    console.log(`${numOfContacts} contact(s) added successfully!`);
+}
 function addressBook() {
     console.log("Creating a new contact:-");
     while (true) {
-        const cases = readline_sync_1.default.question("Enter Input (1-4): ");
+        const cases = readline_sync_1.default.question("Enter Input (1-6): ");
         switch (cases) {
             case "1":
                 addNewContact();
@@ -98,6 +111,9 @@ function addressBook() {
                 deleteContact();
                 break;
             case "5":
+                addNewMultipleContacts();
+                break;
+            case "6":
                 console.log("Exit");
                 return;
             default:
