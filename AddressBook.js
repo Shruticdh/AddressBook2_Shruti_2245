@@ -32,7 +32,7 @@ function addNewContact() {
     contacts.push(addContact);
 }
 function listContacts() {
-    console.log("Contacts..");
+    console.log("Contacts:-");
     if (contacts.length === 0) {
         console.log("Empty");
     }
@@ -65,8 +65,23 @@ function editContact() {
     contact.email = readline_sync_1.default.question(`Enter Email [${contact.email}]: `, { defaultInput: contact.email });
     console.log("Contact updated successfully!");
 }
+function deleteContact() {
+    const firstName = readline_sync_1.default.question("Enter First Name of the contact to delete: ");
+    const lastName = readline_sync_1.default.question("Enter Last Name of the contact to delete: ");
+    const filteredContacts = contacts.filter((c) => !(c.firstName.toLowerCase() === firstName.toLowerCase() && c.lastName.toLowerCase() === lastName.toLowerCase()));
+    console.log(filteredContacts);
+    console.log(filteredContacts.length);
+    if (filteredContacts.length === contacts.length) {
+        console.log("Contact not found!");
+    }
+    else {
+        console.log("Contact deleted successfully!");
+        contacts.length = 0; // Clear the original array
+        contacts.push(...filteredContacts); // Add the remaining contacts back
+    }
+}
 function addressBook() {
-    console.log("Creating a new contact...");
+    console.log("Creating a new contact:-");
     while (true) {
         const cases = readline_sync_1.default.question("Enter Input (1-4): ");
         switch (cases) {
@@ -80,6 +95,9 @@ function addressBook() {
                 editContact();
                 break;
             case "4":
+                deleteContact();
+                break;
+            case "5":
                 console.log("Exit");
                 return;
             default:

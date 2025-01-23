@@ -1,3 +1,4 @@
+import { log } from "console";
 import readlineSync from "readline-sync";
 
 console.log("Welcome to Address Book");
@@ -85,6 +86,27 @@ function editContact(): void {
     console.log("Contact updated successfully!");
 }
 
+
+function deleteContact(): void {
+    const firstName = readlineSync.question("Enter First Name of the contact to delete: ");
+    const lastName = readlineSync.question("Enter Last Name of the contact to delete: ");
+  
+    const filteredContacts = contacts.filter(
+      (c) => !(c.firstName.toLowerCase() === firstName.toLowerCase() && c.lastName.toLowerCase() === lastName.toLowerCase())
+    );
+    console.log(filteredContacts);
+    console.log(filteredContacts.length);
+  
+    if (filteredContacts.length === contacts.length) {
+      console.log("Contact not found!");
+    } else {
+      console.log("Contact deleted successfully!");
+      contacts.length = 0; // Clear the original array
+      contacts.push(...filteredContacts); // Add the remaining contacts back
+    }
+  }
+
+  
 function addressBook(): void {
   console.log("Creating a new contact:-");
 
@@ -105,8 +127,12 @@ function addressBook(): void {
         break;
 
       case "4":
+        deleteContact();
+        break;
+
+      case "5":
         console.log("Exit");
-        return;
+        return;  
 
       default:
         console.log("No Contacts");
