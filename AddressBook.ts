@@ -43,7 +43,7 @@ function addNewContact(): void {
 }
 
 function listContacts(): void {
-  console.log("Contacts..");
+  console.log("Contacts:-");
   if (contacts.length === 0) {
     console.log("Empty");
   } else {
@@ -79,19 +79,17 @@ function editContact(): void {
     contact.city = readlineSync.question(`Enter City [${contact.city}]: `, { defaultInput: contact.city });
     contact.state = readlineSync.question(`Enter State [${contact.state}]: `, { defaultInput: contact.state });
     contact.zip = readlineSync.question(`Enter ZIP Code [${contact.zip}]: `, { defaultInput: contact.zip });
-    contact.phoneNumber = readlineSync.question(`Enter Phone Number [${contact.phoneNumber}]: `, {
-      defaultInput: contact.phoneNumber,
-    });
+    contact.phoneNumber = readlineSync.question(`Enter Phone Number [${contact.phoneNumber}]: `, {defaultInput: contact.phoneNumber,});
     contact.email = readlineSync.question(`Enter Email [${contact.email}]: `, { defaultInput: contact.email });
-  
+
     console.log("Contact updated successfully!");
 }
 
 function addressBook(): void {
-  console.log("Creating a new contact...");
+  console.log("Creating a new contact:-");
 
   while (true) {
-    const cases = readlineSync.question("Enter First Name (1-4): ");
+    const cases = readlineSync.question("Enter Input (1-4): ");
 
     switch (cases) {
       case "1":
@@ -103,12 +101,12 @@ function addressBook(): void {
         break;
 
       case "3":
-        console.log("Exit");
-        return;
-
-      case "4":
         editContact();
         break;
+
+      case "4":
+        console.log("Exit");
+        return;
 
       default:
         console.log("No Contacts");

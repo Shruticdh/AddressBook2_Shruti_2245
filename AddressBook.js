@@ -61,16 +61,14 @@ function editContact() {
     contact.city = readline_sync_1.default.question(`Enter City [${contact.city}]: `, { defaultInput: contact.city });
     contact.state = readline_sync_1.default.question(`Enter State [${contact.state}]: `, { defaultInput: contact.state });
     contact.zip = readline_sync_1.default.question(`Enter ZIP Code [${contact.zip}]: `, { defaultInput: contact.zip });
-    contact.phoneNumber = readline_sync_1.default.question(`Enter Phone Number [${contact.phoneNumber}]: `, {
-        defaultInput: contact.phoneNumber,
-    });
+    contact.phoneNumber = readline_sync_1.default.question(`Enter Phone Number [${contact.phoneNumber}]: `, { defaultInput: contact.phoneNumber, });
     contact.email = readline_sync_1.default.question(`Enter Email [${contact.email}]: `, { defaultInput: contact.email });
     console.log("Contact updated successfully!");
 }
 function addressBook() {
     console.log("Creating a new contact...");
     while (true) {
-        const cases = readline_sync_1.default.question("Enter First Name (1-4): ");
+        const cases = readline_sync_1.default.question("Enter Input (1-4): ");
         switch (cases) {
             case "1":
                 addNewContact();
@@ -79,11 +77,11 @@ function addressBook() {
                 listContacts();
                 break;
             case "3":
-                console.log("Exit");
-                return;
-            case "4":
                 editContact();
                 break;
+            case "4":
+                console.log("Exit");
+                return;
             default:
                 console.log("No Contacts");
         }
