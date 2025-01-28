@@ -31,7 +31,6 @@ function createContact(): Contact {
 function addNewContact(book: { contacts: Contact[] }): void {
   const newContact = createContact();
 
-  // Check for duplicate by matching firstName and lastName
   const isDuplicate = book.contacts.some(
     (c) =>
       c.firstName.toLowerCase() === newContact.firstName.toLowerCase() &&
@@ -64,6 +63,48 @@ function listContacts(book: { name: string; contacts: Contact[] }): void {
          Zip: ${c.zip}
          Phone: ${c.phoneNumber}
          Email: ${c.email}`
+      );
+    });
+  }
+}
+
+function searchPersonByCityOrState(): void {
+  if (addressBooks.length === 0) {
+    console.log("No Address Books available.");
+    return;
+  }
+
+  const searchBy = readlineSync.question(
+    "Do you want to search by (1) City or (2) State? Enter 1 or 2: "
+  );
+  const searchValue = readlineSync.question("Enter the City or State name: ").toLowerCase();
+
+  const results: { bookName: string; contact: Contact }[] = [];
+  addressBooks.forEach((book) => {
+    book.contacts.forEach((contact) => {
+      if (
+        (searchBy === "1" && contact.city.toLowerCase() === searchValue) ||
+        (searchBy === "2" && contact.state.toLowerCase() === searchValue)
+      ) {
+        results.push({ bookName: book.name, contact });
+      }
+    });
+  });
+
+  if (results.length === 0) {
+    console.log("No contacts found.");
+  } else {
+    console.log("\nSearch Results:");
+    results.forEach(({ bookName, contact }, i) => {
+      console.log(
+        `\nResult ${i + 1} from Address Book "${bookName}":
+         Name: ${contact.firstName} ${contact.lastName}
+         Address: ${contact.address}
+         City: ${contact.city}
+         State: ${contact.state}
+         Zip: ${contact.zip}
+         Phone: ${contact.phoneNumber}
+         Email: ${contact.email}`
       );
     });
   }
@@ -179,7 +220,8 @@ function main(): void {
     console.log("\nMain Menu:");
     console.log("1. Add Address Book");
     console.log("2. Manage Address Book");
-    console.log("3. Exit");
+    console.log("3. Search Person by City or State");
+    console.log("4. Exit");
 
     const choice = readlineSync.question("Enter your choice: ");
     switch (choice) {
@@ -190,6 +232,9 @@ function main(): void {
         manageAddressBook();
         break;
       case "3":
+        searchPersonByCityOrState();
+        break;
+      case "4":
         console.log("Goodbye!");
         return;
       default:

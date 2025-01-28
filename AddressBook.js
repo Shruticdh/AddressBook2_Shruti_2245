@@ -20,7 +20,6 @@ function createContact() {
 }
 function addNewContact(book) {
     const newContact = createContact();
-    // Check for duplicate by matching firstName and lastName
     const isDuplicate = book.contacts.some((c) => c.firstName.toLowerCase() === newContact.firstName.toLowerCase() &&
         c.lastName.toLowerCase() === newContact.lastName.toLowerCase());
     if (isDuplicate) {
@@ -45,6 +44,39 @@ function listContacts(book) {
          Zip: ${c.zip}
          Phone: ${c.phoneNumber}
          Email: ${c.email}`);
+        });
+    }
+}
+function searchPersonByCityOrState() {
+    if (addressBooks.length === 0) {
+        console.log("No Address Books available.");
+        return;
+    }
+    const searchBy = readline_sync_1.default.question("Do you want to search by (1) City or (2) State? Enter 1 or 2: ");
+    const searchValue = readline_sync_1.default.question("Enter the City or State name: ").toLowerCase();
+    const results = [];
+    addressBooks.forEach((book) => {
+        book.contacts.forEach((contact) => {
+            if ((searchBy === "1" && contact.city.toLowerCase() === searchValue) ||
+                (searchBy === "2" && contact.state.toLowerCase() === searchValue)) {
+                results.push({ bookName: book.name, contact });
+            }
+        });
+    });
+    if (results.length === 0) {
+        console.log("No contacts found.");
+    }
+    else {
+        console.log("\nSearch Results:");
+        results.forEach(({ bookName, contact }, i) => {
+            console.log(`\nResult ${i + 1} from Address Book "${bookName}":
+         Name: ${contact.firstName} ${contact.lastName}
+         Address: ${contact.address}
+         City: ${contact.city}
+         State: ${contact.state}
+         Zip: ${contact.zip}
+         Phone: ${contact.phoneNumber}
+         Email: ${contact.email}`);
         });
     }
 }
@@ -140,7 +172,8 @@ function main() {
         console.log("\nMain Menu:");
         console.log("1. Add Address Book");
         console.log("2. Manage Address Book");
-        console.log("3. Exit");
+        console.log("3. Search Person by City or State");
+        console.log("4. Exit");
         const choice = readline_sync_1.default.question("Enter your choice: ");
         switch (choice) {
             case "1":
@@ -150,6 +183,9 @@ function main() {
                 manageAddressBook();
                 break;
             case "3":
+                searchPersonByCityOrState();
+                break;
+            case "4":
                 console.log("Goodbye!");
                 return;
             default:
