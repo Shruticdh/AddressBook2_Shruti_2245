@@ -19,7 +19,15 @@ function createContact() {
     };
 }
 function addNewContact(book) {
-    book.contacts.push(createContact());
+    const newContact = createContact();
+    // Check for duplicate by matching firstName and lastName
+    const isDuplicate = book.contacts.some((c) => c.firstName.toLowerCase() === newContact.firstName.toLowerCase() &&
+        c.lastName.toLowerCase() === newContact.lastName.toLowerCase());
+    if (isDuplicate) {
+        console.log(`A contact with the name "${newContact.firstName} ${newContact.lastName}" already exists in this Address Book.`);
+        return;
+    }
+    book.contacts.push(newContact);
     console.log("Contact added successfully!");
 }
 function listContacts(book) {
