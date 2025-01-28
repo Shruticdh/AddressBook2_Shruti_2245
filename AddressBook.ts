@@ -68,14 +68,13 @@ function listContacts(book: { name: string; contacts: Contact[] }): void {
   }
 }
 
-function viewPersonsByCityOrState(): void {
-  const searchType = readlineSync.question("View persons by (1) City or (2) State? Enter 1 or 2: ");
+function countContactsByCityOrState(): void {
+  const searchType = readlineSync.question("Count contacts by (1) City or (2) State? Enter 1 or 2: ");
   const searchValue = readlineSync.question(
-    `Enter the ${searchType === "1" ? "City" : "State"} to search: `
+    `Enter the ${searchType === "1" ? "City" : "State"} to count: `
   );
 
-  console.log(`\nPersons in ${searchValue}:`);
-  let found = false;
+  let count = 0;
 
   addressBooks.forEach((book) => {
     book.contacts.forEach((contact) => {
@@ -83,17 +82,12 @@ function viewPersonsByCityOrState(): void {
         (searchType === "1" && contact.city.toLowerCase() === searchValue.toLowerCase()) ||
         (searchType === "2" && contact.state.toLowerCase() === searchValue.toLowerCase())
       ) {
-        console.log(
-          `- ${contact.firstName} ${contact.lastName} | Address: ${contact.address} | Phone: ${contact.phoneNumber} | Email: ${contact.email}`
-        );
-        found = true;
+        count++;
       }
     });
   });
 
-  if (!found) {
-    console.log(`No persons found in ${searchValue}.`);
-  }
+  console.log(`\nNumber of contacts in ${searchValue}: ${count}`);
 }
 
 function addNewAddressBook(): void {
@@ -155,7 +149,7 @@ function main(): void {
     console.log("\nMain Menu:");
     console.log("1. Add Address Book");
     console.log("2. Manage Address Book");
-    console.log("3. View Persons by City or State");
+    console.log("3. Count Contacts by City or State");
     console.log("4. Exit");
 
     const choice = readlineSync.question("Enter your choice: ");
@@ -167,7 +161,7 @@ function main(): void {
         manageAddressBook();
         break;
       case "3":
-        viewPersonsByCityOrState();
+        countContactsByCityOrState();
         break;
       case "4":
         console.log("Goodbye!");

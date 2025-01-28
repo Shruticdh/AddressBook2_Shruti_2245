@@ -47,23 +47,19 @@ function listContacts(book) {
         });
     }
 }
-function viewPersonsByCityOrState() {
-    const searchType = readline_sync_1.default.question("View persons by (1) City or (2) State? Enter 1 or 2: ");
-    const searchValue = readline_sync_1.default.question(`Enter the ${searchType === "1" ? "City" : "State"} to search: `);
-    console.log(`\nPersons in ${searchValue}:`);
-    let found = false;
+function countContactsByCityOrState() {
+    const searchType = readline_sync_1.default.question("Count contacts by (1) City or (2) State? Enter 1 or 2: ");
+    const searchValue = readline_sync_1.default.question(`Enter the ${searchType === "1" ? "City" : "State"} to count: `);
+    let count = 0;
     addressBooks.forEach((book) => {
         book.contacts.forEach((contact) => {
             if ((searchType === "1" && contact.city.toLowerCase() === searchValue.toLowerCase()) ||
                 (searchType === "2" && contact.state.toLowerCase() === searchValue.toLowerCase())) {
-                console.log(`- ${contact.firstName} ${contact.lastName} | Address: ${contact.address} | Phone: ${contact.phoneNumber} | Email: ${contact.email}`);
-                found = true;
+                count++;
             }
         });
     });
-    if (!found) {
-        console.log(`No persons found in ${searchValue}.`);
-    }
+    console.log(`\nNumber of contacts in ${searchValue}: ${count}`);
 }
 function addNewAddressBook() {
     const name = readline_sync_1.default.question("Enter a unique name for the Address Book: ");
@@ -118,7 +114,7 @@ function main() {
         console.log("\nMain Menu:");
         console.log("1. Add Address Book");
         console.log("2. Manage Address Book");
-        console.log("3. View Persons by City or State");
+        console.log("3. Count Contacts by City or State");
         console.log("4. Exit");
         const choice = readline_sync_1.default.question("Enter your choice: ");
         switch (choice) {
@@ -129,7 +125,7 @@ function main() {
                 manageAddressBook();
                 break;
             case "3":
-                viewPersonsByCityOrState();
+                countContactsByCityOrState();
                 break;
             case "4":
                 console.log("Goodbye!");
