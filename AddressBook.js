@@ -47,68 +47,22 @@ function listContacts(book) {
         });
     }
 }
-function searchPersonByCityOrState() {
-    if (addressBooks.length === 0) {
-        console.log("No Address Books available.");
-        return;
-    }
-    const searchBy = readline_sync_1.default.question("Do you want to search by (1) City or (2) State? Enter 1 or 2: ");
-    const searchValue = readline_sync_1.default.question("Enter the City or State name: ").toLowerCase();
-    const results = [];
+function viewPersonsByCityOrState() {
+    const searchType = readline_sync_1.default.question("View persons by (1) City or (2) State? Enter 1 or 2: ");
+    const searchValue = readline_sync_1.default.question(`Enter the ${searchType === "1" ? "City" : "State"} to search: `);
+    console.log(`\nPersons in ${searchValue}:`);
+    let found = false;
     addressBooks.forEach((book) => {
         book.contacts.forEach((contact) => {
-            if ((searchBy === "1" && contact.city.toLowerCase() === searchValue) ||
-                (searchBy === "2" && contact.state.toLowerCase() === searchValue)) {
-                results.push({ bookName: book.name, contact });
+            if ((searchType === "1" && contact.city.toLowerCase() === searchValue.toLowerCase()) ||
+                (searchType === "2" && contact.state.toLowerCase() === searchValue.toLowerCase())) {
+                console.log(`- ${contact.firstName} ${contact.lastName} | Address: ${contact.address} | Phone: ${contact.phoneNumber} | Email: ${contact.email}`);
+                found = true;
             }
         });
     });
-    if (results.length === 0) {
-        console.log("No contacts found.");
-    }
-    else {
-        console.log("\nSearch Results:");
-        results.forEach(({ bookName, contact }, i) => {
-            console.log(`\nResult ${i + 1} from Address Book "${bookName}":
-         Name: ${contact.firstName} ${contact.lastName}
-         Address: ${contact.address}
-         City: ${contact.city}
-         State: ${contact.state}
-         Zip: ${contact.zip}
-         Phone: ${contact.phoneNumber}
-         Email: ${contact.email}`);
-        });
-    }
-}
-function editContact(book) {
-    const firstName = readline_sync_1.default.question("Enter First Name of the contact to edit: ");
-    const lastName = readline_sync_1.default.question("Enter Last Name of the contact to edit: ");
-    const contact = book.contacts.find((c) => c.firstName.toLowerCase() === firstName.toLowerCase() &&
-        c.lastName.toLowerCase() === lastName.toLowerCase());
-    if (!contact) {
-        console.log("Contact not found!");
-        return;
-    }
-    console.log("Editing Contact...");
-    contact.address = readline_sync_1.default.question(`Enter Address [${contact.address}]: `, { defaultInput: contact.address });
-    contact.city = readline_sync_1.default.question(`Enter City [${contact.city}]: `, { defaultInput: contact.city });
-    contact.state = readline_sync_1.default.question(`Enter State [${contact.state}]: `, { defaultInput: contact.state });
-    contact.zip = readline_sync_1.default.question(`Enter ZIP [${contact.zip}]: `, { defaultInput: contact.zip });
-    contact.phoneNumber = readline_sync_1.default.question(`Enter Phone [${contact.phoneNumber}]: `, { defaultInput: contact.phoneNumber });
-    contact.email = readline_sync_1.default.question(`Enter Email [${contact.email}]: `, { defaultInput: contact.email });
-    console.log("Contact updated successfully!");
-}
-function deleteContact(book) {
-    const firstName = readline_sync_1.default.question("Enter First Name of the contact to delete: ");
-    const lastName = readline_sync_1.default.question("Enter Last Name of the contact to delete: ");
-    const initialLength = book.contacts.length;
-    book.contacts = book.contacts.filter((c) => c.firstName.toLowerCase() !== firstName.toLowerCase() ||
-        c.lastName.toLowerCase() !== lastName.toLowerCase());
-    if (book.contacts.length === initialLength) {
-        console.log("Contact not found!");
-    }
-    else {
-        console.log("Contact deleted successfully!");
+    if (!found) {
+        console.log(`No persons found in ${searchValue}.`);
     }
 }
 function addNewAddressBook() {
@@ -143,9 +97,7 @@ function manageAddressBook() {
         console.log(`\nManaging Address Book "${book.name}":`);
         console.log("1. Add Contact");
         console.log("2. List Contacts");
-        console.log("3. Edit Contact");
-        console.log("4. Delete Contact");
-        console.log("5. Back");
+        console.log("3. Back");
         const choice = readline_sync_1.default.question("Enter your choice: ");
         switch (choice) {
             case "1":
@@ -155,12 +107,6 @@ function manageAddressBook() {
                 listContacts(book);
                 break;
             case "3":
-                editContact(book);
-                break;
-            case "4":
-                deleteContact(book);
-                break;
-            case "5":
                 return;
             default:
                 console.log("Invalid choice.");
@@ -172,7 +118,7 @@ function main() {
         console.log("\nMain Menu:");
         console.log("1. Add Address Book");
         console.log("2. Manage Address Book");
-        console.log("3. Search Person by City or State");
+        console.log("3. View Persons by City or State");
         console.log("4. Exit");
         const choice = readline_sync_1.default.question("Enter your choice: ");
         switch (choice) {
@@ -183,7 +129,7 @@ function main() {
                 manageAddressBook();
                 break;
             case "3":
-                searchPersonByCityOrState();
+                viewPersonsByCityOrState();
                 break;
             case "4":
                 console.log("Goodbye!");
