@@ -29,20 +29,19 @@ function createContact(): Contact {
   };
 }
 
-// Add a new contact to the selected address book
+// Add a new contact to an address book
 function addNewContact(book: { contacts: Contact[] }): void {
   const newContact = createContact();
 
-  const isDuplicate = book.contacts.some(
-    (c) =>
-      c.firstName.toLowerCase() === newContact.firstName.toLowerCase() &&
-      c.lastName.toLowerCase() === newContact.lastName.toLowerCase()
-  );
-
-  if (isDuplicate) {
-    console.log(
-      `A contact with the name "${newContact.firstName} ${newContact.lastName}" already exists in this Address Book.`
-    );
+  // Check for duplicate entry
+  if (
+    book.contacts.some(
+      (c) =>
+        c.firstName.toLowerCase() === newContact.firstName.toLowerCase() &&
+        c.lastName.toLowerCase() === newContact.lastName.toLowerCase()
+    )
+  ) {
+    console.log("Error: Contact with the same name already exists.");
     return;
   }
 
@@ -50,7 +49,7 @@ function addNewContact(book: { contacts: Contact[] }): void {
   console.log("Contact added successfully!");
 }
 
-// List all contacts in the selected address book
+// List all contacts in an address book
 function listContacts(book: { name: string; contacts: Contact[] }): void {
   console.log(`\nContacts in Address Book "${book.name}":`);
   if (book.contacts.length === 0) {
@@ -71,21 +70,89 @@ function listContacts(book: { name: string; contacts: Contact[] }): void {
   }
 }
 
-// Sort contacts alphabetically by name
-function sortContacts(book: { name: string; contacts: Contact[] }): void {
-  if (book.contacts.length === 0) {
-    console.log("No contacts to sort.");
+// Edit an existing contact
+function editContact(book: { contacts: Contact[] }): void {
+  const firstName = readlineSync.question("Enter First Name of the contact to edit: ");
+  const lastName = readlineSync.question("Enter Last Name of the contact to edit: ");
+  const contact = book.contacts.find(
+    (c) =>
+      c.firstName.toLowerCase() === firstName.toLowerCase() &&
+      c.lastName.toLowerCase() === lastName.toLowerCase()
+  );
+
+  if (!contact) {
+    console.log("Contact not found!");
     return;
   }
 
-  book.contacts.sort((a, b) => {
-    const nameA = a.firstName.toLowerCase() + " " + a.lastName.toLowerCase();
-    const nameB = b.firstName.toLowerCase() + " " + b.lastName.toLowerCase();
-    return nameA.localeCompare(nameB);
-  });
+  console.log("Editing Contact...");
+  contact.address = readlineSync.question(`Enter Address [${contact.address}]: `, { defaultInput: contact.address });
+  contact.city = readlineSync.question(`Enter City [${contact.city}]: `, { defaultInput: contact.city });
+  contact.state = readlineSync.question(`Enter State [${contact.state}]: `, { defaultInput: contact.state });
+  contact.zip = readlineSync.question(`Enter ZIP [${contact.zip}]: `, { defaultInput: contact.zip });
+  contact.phoneNumber = readlineSync.question(`Enter Phone [${contact.phoneNumber}]: `, { defaultInput: contact.phoneNumber });
+  contact.email = readlineSync.question(`Enter Email [${contact.email}]: `, { defaultInput: contact.email });
 
-  console.log(`\nContacts in the Address Book have been sorted alphabetically by name.`);
-  listContacts(book);
+  console.log("Contact updated successfully!");
+}
+
+// Delete a contact
+function deleteContact(book: { contacts: Contact[] }): void {
+  const firstName = readlineSync.question("Enter First Name of the contact to delete: ");
+  const lastName = readlineSync.question("Enter Last Name of the contact to delete: ");
+  const initialLength = book.contacts.length;
+
+  book.contacts = book.contacts.filter(
+    (c) =>
+      c.firstName.toLowerCase() !== firstName.toLowerCase() ||
+      c.lastName.toLowerCase() !== lastName.toLowerCase()
+  );
+
+  if (book.contacts.length === initialLength) {
+    console.log("Contact not found!");
+  } else {
+    console.log("Contact deleted successfully!");
+  }
+}
+
+// Function to sort contacts
+function sortContacts(book: { name: string; contacts: Contact[] }): void {
+  if (book.contacts.length === 0) {
+    console.log(`No contacts in Address Book "${book.name}" to sort.`);
+    return;
+  }
+
+  console.log("\nSort contacts by:");
+  console.log("1. First Name");
+  console.log("2. City");
+  console.log("3. State");
+  console.log("4. ZIP Code");
+
+  const choice = readlineSync.question("Enter your choice: ");
+
+  switch (choice) {
+    case "1":
+      book.contacts.sort((a, b) => a.firstName.localeCompare(b.firstName));
+      console.log("Contacts sorted by First Name.");
+      break;
+    case "2":
+      book.contacts.sort((a, b) => a.city.localeCompare(b.city));
+      console.log("Contacts sorted by City.");
+      break;
+    case "3":
+      book.contacts.sort((a, b) => a.state.localeCompare(b.state));
+      console.log("Contacts sorted by State.");
+      break;
+    case "4":
+      book.contacts.sort((a, b) => a.zip.localeCompare(b.zip));
+      console.log("Contacts sorted by ZIP Code.");
+      break;
+    default:
+      console.log("Invalid choice.");
+      return;
+  }
+
+  listContacts(book); // Display sorted contacts
 }
 
 // Add a new address book
@@ -99,7 +166,7 @@ function addNewAddressBook(): void {
   }
 }
 
-// Select an address book from the list
+// Select an existing address book
 function selectAddressBook(): { name: string; contacts: Contact[] } | null {
   if (addressBooks.length === 0) {
     console.log("No Address Books available.");
@@ -110,7 +177,7 @@ function selectAddressBook(): { name: string; contacts: Contact[] } | null {
   addressBooks.forEach((book, i) => console.log(`${i + 1}. ${book.name}`));
   const index = parseInt(readlineSync.question("Select Address Book by number: "), 10) - 1;
 
-  if (index < 0 || index >= addressBooks.length || isNaN(index)) {
+  if (index < 0 || index >= addressBooks.length) {
     console.log("Invalid selection.");
     return null;
   }
@@ -118,20 +185,19 @@ function selectAddressBook(): { name: string; contacts: Contact[] } | null {
   return addressBooks[index];
 }
 
-// Manage the selected address book
+// Manage an address book
 function manageAddressBook(): void {
   const book = selectAddressBook();
-  if (!book) {
-    console.log("No Address Book selected.");
-    return;
-  }
+  if (!book) return;
 
   while (true) {
     console.log(`\nManaging Address Book "${book.name}":`);
     console.log("1. Add Contact");
     console.log("2. List Contacts");
-    console.log("3. Sort Contacts Alphabetically");
-    console.log("4. Back");
+    console.log("3. Edit Contact");
+    console.log("4. Delete Contact");
+    console.log("5. Sort Contacts");
+    console.log("6. Back");
 
     const choice = readlineSync.question("Enter your choice: ");
     switch (choice) {
@@ -139,16 +205,18 @@ function manageAddressBook(): void {
         addNewContact(book);
         break;
       case "2":
-        if (book.contacts.length === 0) {
-          console.log("No contacts found.");
-        } else {
-          listContacts(book);  // This will now run safely.
-        }
+        listContacts(book);
         break;
       case "3":
-        sortContacts(book);
+        editContact(book);
         break;
       case "4":
+        deleteContact(book);
+        break;
+      case "5":
+        sortContacts(book);
+        break;
+      case "6":
         return;
       default:
         console.log("Invalid choice.");
@@ -156,8 +224,7 @@ function manageAddressBook(): void {
   }
 }
 
-
-// Main function
+// Main menu
 function main(): void {
   while (true) {
     console.log("\nMain Menu:");
