@@ -1,4 +1,5 @@
 import readlineSync from "readline-sync";
+import fs from "fs";
 
 console.log("Welcome to the Address Book System");
 
@@ -13,7 +14,23 @@ interface Contact {
   email: string;
 }
 
-const addressBooks: { name: string; contacts: Contact[] }[] = [];
+const FILE_NAME = "addressBooks.json";
+let addressBooks: { name: string; contacts: Contact[] }[] = [];
+
+// Load data from file
+function loadAddressBooks(): void {
+  if (fs.existsSync(FILE_NAME)) {
+    const data = fs.readFileSync(FILE_NAME, "utf-8");
+    addressBooks = JSON.parse(data);
+    console.log("Address Books loaded successfully!");
+  }
+}
+
+// Save data to file
+function saveAddressBooks(): void {
+  fs.writeFileSync(FILE_NAME, JSON.stringify(addressBooks, null, 2), "utf-8");
+  console.log("Address Books saved successfully!");
+}
 
 // Create a new contact
 function createContact(): Contact {
@@ -46,6 +63,7 @@ function addNewContact(book: { contacts: Contact[] }): void {
   }
 
   book.contacts.push(newContact);
+  saveAddressBooks();
   console.log("Contact added successfully!");
 }
 
@@ -93,6 +111,7 @@ function editContact(book: { contacts: Contact[] }): void {
   contact.phoneNumber = readlineSync.question(`Enter Phone [${contact.phoneNumber}]: `, { defaultInput: contact.phoneNumber });
   contact.email = readlineSync.question(`Enter Email [${contact.email}]: `, { defaultInput: contact.email });
 
+  saveAddressBooks();
   console.log("Contact updated successfully!");
 }
 
@@ -111,48 +130,9 @@ function deleteContact(book: { contacts: Contact[] }): void {
   if (book.contacts.length === initialLength) {
     console.log("Contact not found!");
   } else {
+    saveAddressBooks();
     console.log("Contact deleted successfully!");
   }
-}
-
-// Function to sort contacts
-function sortContacts(book: { name: string; contacts: Contact[] }): void {
-  if (book.contacts.length === 0) {
-    console.log(`No contacts in Address Book "${book.name}" to sort.`);
-    return;
-  }
-
-  console.log("\nSort contacts by:");
-  console.log("1. First Name");
-  console.log("2. City");
-  console.log("3. State");
-  console.log("4. ZIP Code");
-
-  const choice = readlineSync.question("Enter your choice: ");
-
-  switch (choice) {
-    case "1":
-      book.contacts.sort((a, b) => a.firstName.localeCompare(b.firstName));
-      console.log("Contacts sorted by First Name.");
-      break;
-    case "2":
-      book.contacts.sort((a, b) => a.city.localeCompare(b.city));
-      console.log("Contacts sorted by City.");
-      break;
-    case "3":
-      book.contacts.sort((a, b) => a.state.localeCompare(b.state));
-      console.log("Contacts sorted by State.");
-      break;
-    case "4":
-      book.contacts.sort((a, b) => a.zip.localeCompare(b.zip));
-      console.log("Contacts sorted by ZIP Code.");
-      break;
-    default:
-      console.log("Invalid choice.");
-      return;
-  }
-
-  listContacts(book); // Display sorted contacts
 }
 
 // Add a new address book
@@ -162,6 +142,7 @@ function addNewAddressBook(): void {
     console.log("Address Book with this name already exists.");
   } else {
     addressBooks.push({ name, contacts: [] });
+    saveAddressBooks();
     console.log(`Address Book "${name}" created successfully!`);
   }
 }
@@ -196,8 +177,7 @@ function manageAddressBook(): void {
     console.log("2. List Contacts");
     console.log("3. Edit Contact");
     console.log("4. Delete Contact");
-    console.log("5. Sort Contacts");
-    console.log("6. Back");
+    console.log("5. Back");
 
     const choice = readlineSync.question("Enter your choice: ");
     switch (choice) {
@@ -214,9 +194,6 @@ function manageAddressBook(): void {
         deleteContact(book);
         break;
       case "5":
-        sortContacts(book);
-        break;
-      case "6":
         return;
       default:
         console.log("Invalid choice.");
@@ -226,6 +203,8 @@ function manageAddressBook(): void {
 
 // Main menu
 function main(): void {
+  loadAddressBooks(); // Load data at startup
+
   while (true) {
     console.log("\nMain Menu:");
     console.log("1. Add Address Book");
@@ -241,6 +220,7 @@ function main(): void {
         manageAddressBook();
         break;
       case "3":
+        saveAddressBooks(); // Save before exiting
         console.log("Goodbye!");
         return;
       default:
