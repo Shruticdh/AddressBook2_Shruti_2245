@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const readline_sync_1 = __importDefault(require("readline-sync"));
 console.log("Welcome to the Address Book System");
 const addressBooks = [];
+// Create a new contact
 function createContact() {
     return {
         firstName: readline_sync_1.default.question("Enter First Name: "),
@@ -18,6 +19,7 @@ function createContact() {
         email: readline_sync_1.default.question("Enter Email: "),
     };
 }
+// Add a new contact to the selected address book
 function addNewContact(book) {
     const newContact = createContact();
     const isDuplicate = book.contacts.some((c) => c.firstName.toLowerCase() === newContact.firstName.toLowerCase() &&
@@ -29,6 +31,7 @@ function addNewContact(book) {
     book.contacts.push(newContact);
     console.log("Contact added successfully!");
 }
+// List all contacts in the selected address book
 function listContacts(book) {
     console.log(`\nContacts in Address Book "${book.name}":`);
     if (book.contacts.length === 0) {
@@ -47,20 +50,21 @@ function listContacts(book) {
         });
     }
 }
-function countContactsByCityOrState() {
-    const searchType = readline_sync_1.default.question("Count contacts by (1) City or (2) State? Enter 1 or 2: ");
-    const searchValue = readline_sync_1.default.question(`Enter the ${searchType === "1" ? "City" : "State"} to count: `);
-    let count = 0;
-    addressBooks.forEach((book) => {
-        book.contacts.forEach((contact) => {
-            if ((searchType === "1" && contact.city.toLowerCase() === searchValue.toLowerCase()) ||
-                (searchType === "2" && contact.state.toLowerCase() === searchValue.toLowerCase())) {
-                count++;
-            }
-        });
+// Sort contacts alphabetically by name
+function sortContacts(book) {
+    if (book.contacts.length === 0) {
+        console.log("No contacts to sort.");
+        return;
+    }
+    book.contacts.sort((a, b) => {
+        const nameA = a.firstName.toLowerCase() + " " + a.lastName.toLowerCase();
+        const nameB = b.firstName.toLowerCase() + " " + b.lastName.toLowerCase();
+        return nameA.localeCompare(nameB);
     });
-    console.log(`\nNumber of contacts in ${searchValue}: ${count}`);
+    console.log(`\nContacts in the Address Book have been sorted alphabetically by name.`);
+    listContacts(book);
 }
+// Add a new address book
 function addNewAddressBook() {
     const name = readline_sync_1.default.question("Enter a unique name for the Address Book: ");
     if (addressBooks.some((book) => book.name === name)) {
@@ -71,6 +75,7 @@ function addNewAddressBook() {
         console.log(`Address Book "${name}" created successfully!`);
     }
 }
+// Select an address book from the list
 function selectAddressBook() {
     if (addressBooks.length === 0) {
         console.log("No Address Books available.");
@@ -79,43 +84,55 @@ function selectAddressBook() {
     console.log("\nAvailable Address Books:");
     addressBooks.forEach((book, i) => console.log(`${i + 1}. ${book.name}`));
     const index = parseInt(readline_sync_1.default.question("Select Address Book by number: "), 10) - 1;
-    if (index < 0 || index >= addressBooks.length) {
+    if (index < 0 || index >= addressBooks.length || isNaN(index)) {
         console.log("Invalid selection.");
         return null;
     }
     return addressBooks[index];
 }
+// Manage the selected address book
 function manageAddressBook() {
     const book = selectAddressBook();
-    if (!book)
+    if (!book) {
+        console.log("No Address Book selected.");
         return;
+    }
     while (true) {
         console.log(`\nManaging Address Book "${book.name}":`);
         console.log("1. Add Contact");
         console.log("2. List Contacts");
-        console.log("3. Back");
+        console.log("3. Sort Contacts Alphabetically");
+        console.log("4. Back");
         const choice = readline_sync_1.default.question("Enter your choice: ");
         switch (choice) {
             case "1":
                 addNewContact(book);
                 break;
             case "2":
-                listContacts(book);
+                if (book.contacts.length === 0) {
+                    console.log("No contacts found.");
+                }
+                else {
+                    listContacts(book); // This will now run safely.
+                }
                 break;
             case "3":
+                sortContacts(book);
+                break;
+            case "4":
                 return;
             default:
                 console.log("Invalid choice.");
         }
     }
 }
+// Main function
 function main() {
     while (true) {
         console.log("\nMain Menu:");
         console.log("1. Add Address Book");
         console.log("2. Manage Address Book");
-        console.log("3. Count Contacts by City or State");
-        console.log("4. Exit");
+        console.log("3. Exit");
         const choice = readline_sync_1.default.question("Enter your choice: ");
         switch (choice) {
             case "1":
@@ -125,9 +142,6 @@ function main() {
                 manageAddressBook();
                 break;
             case "3":
-                countContactsByCityOrState();
-                break;
-            case "4":
                 console.log("Goodbye!");
                 return;
             default:
